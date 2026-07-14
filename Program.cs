@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using DotNetCoreSqlDb.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add database context and cache
@@ -9,16 +10,12 @@ if(builder.Environment.IsDevelopment())
         options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbConnection")));
     builder.Services.AddDistributedMemoryCache();
 }
-// else
-// {
-//     builder.Services.AddDbContext<MyDatabaseContext>(options =>
-//         options.UseSqlServer(builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")));
-//     builder.Services.AddStackExchangeRedisCache(options =>
-//     {
-//     options.Configuration = builder.Configuration["AZURE_REDIS_CONNECTIONSTRING"];
-//     options.InstanceName = "SampleInstance";
-//     });
-// }
+else
+{
+    builder.Services.AddDbContext<MyDatabaseContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbConnection")));
+    builder.Services.AddDistributedMemoryCache();
+}
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -32,15 +29,12 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(
