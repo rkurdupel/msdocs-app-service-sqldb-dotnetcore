@@ -11,14 +11,6 @@ steps:
 
 - script: dotnet publish -o $(Build.ArtifactStagingDirectory)/app
   displayName: 'Publish app'
-
-- script: |
-    dotnet tool install --global dotnet-ef
-    export PATH="$PATH:$HOME/.dotnet/tools"
-    dotnet restore --runtime linux-x64
-    dotnet ef migrations bundle --runtime linux-x64 --self-contained -o $(Build.ArtifactStagingDirectory)/migrationsbundle/migrationsbundle
-  displayName: 'Build migrations bundle'
-
 - task: AzureWebApp@1
   inputs:
     azureSubscription: 'sc-appservice-dotnet'
