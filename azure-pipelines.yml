@@ -1,3 +1,9 @@
 
 trigger:
   - starter-no-infra
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - script: echo "Pipeline connected"
+    displayName: 'Sanity check'
