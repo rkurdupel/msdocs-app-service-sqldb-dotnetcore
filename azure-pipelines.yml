@@ -1,9 +1,27 @@
-
 trigger:
   - starter-no-infra
+
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-  - script: echo "Pipeline connected"
-    displayName: 'Sanity check'
+- task: UseDotNet@2
+  inputs:
+    version: '8.x'
+
+- script: dotnet publish -o $(Build.ArtifactStagingDirectory)/app
+  displayName: 'Publish app'
+
+- script: |
+    dotnet tool install --global dotnet-ef
+    export PATH="$PATH:$HOME/.dotnet/tools"
+    dotnet restore --runtime linux-x64
+    dotnet ef migrations bundle --runtime linux-x64 --self-contained -o $(Build.ArtifactStagingDirectory)/migrationsbundle/migrationsbundle
+  displayName: 'Build migrations bundle'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'sc-appservice-dotnet'
+    appType: 'webAppLinux'
+    appName: 'wa-dotnet-microsoft'
+    package: '$(Build.ArtifactStagingDirectory)/app'
