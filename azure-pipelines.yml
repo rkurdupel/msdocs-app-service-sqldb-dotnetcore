@@ -2,7 +2,7 @@ trigger:
   - starter-no-infra
 
 pool:
-  vmImage: windows-self-hosted
+  name: windows-self-hosted
 
 steps:
 - task: UseDotNet@2
